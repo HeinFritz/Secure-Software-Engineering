@@ -1,17 +1,28 @@
 const express = require("express");
 const router = express.Router();
 const wishlistController = require("../controllers/wishlistController");
-const authMiddleware = require('../authMiddleware'); // Adjusted path
+const authenticate = require("../middleware/authenticate");
+const authorize = require("../middleware/authorize");
 
-// Protect all routes
-router.use(authMiddleware);
+// Apply authentication middleware to all routes in this router
+router.use(authenticate);
 
-// Routes
-router.post("/", wishlistController.createWishlist);     
-router.post("/:id/media", wishlistController.addMediaToWishlist);
-router.delete("/:wishlistId/media/:mediaId", wishlistController.removeMediaFromWishlist);
-router.delete("/:id", wishlistController.deleteWishlist);
-router.get("/", wishlistController.getAllWishlists);
-router.get("/:id", wishlistController.getWishlistWithDetails);
+// Public route: Create a new wishlist
+router.post("/", authorize("member"), wishlistController.createWishlist);
+
+// Add media to a specific wishlist
+router.post("/:id/media", authorize("member"), wishlistController.addMediaToWishlist);
+
+// Remove media from a specific wishlist
+router.delete("/:wishlistId/media/:mediaId", authorize("member"), wishlistController.removeMediaFromWishlist);
+
+// Delete a specific wishlist
+router.delete("/:id", authorize("member"), wishlistController.deleteWishlist);
+
+// Get all wishlists
+router.get("/", authorize("member"), wishlistController.getAllWishlists);
+
+// Get details of a specific wishlist
+router.get("/:id", authorize("member"), wishlistController.getWishlistWithDetails);
 
 module.exports = router;

@@ -15,7 +15,7 @@ Content-Type: application/json
 
 ###
 
-@token = {{postLogin.response.body.token}}
+@jwt_token = {{postLogin.response.body.token}}
 
 ### 3) Access wishlist without a token (should 401)
 GET http://localhost:5002/wishlists
@@ -30,7 +30,7 @@ Authorization: Bearer invalid-token-here
 
 ### 5) Access wishlist with valid token (should 200)
 GET http://localhost:5002/wishlists
-Authorization: Bearer {{token}}
+Authorization: Bearer {{jwt_token}}
 
 ###
 
@@ -42,7 +42,7 @@ GET http://localhost:3001/media/7
 ### 7) Create a new wishlist (protected)
 POST http://localhost:5002/wishlists
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{jwt_token}}
 
 {
   "wishlistName": "The Books",
@@ -54,7 +54,7 @@ Authorization: Bearer {{token}}
 ### 8) Add media to wishlist (protected)
 POST http://localhost:5002/wishlists/6/media
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{jwt_token}}
 
 {
   "media_id": 2
@@ -64,16 +64,18 @@ Authorization: Bearer {{token}}
 
 ### 9) Remove media from a wishlist (protected)
 DELETE http://localhost:5002/wishlists/6/media/2
-Authorization: Bearer {{token}}
+Authorization: Bearer {{jwt_token}}
 
 ###
 
 ### 10) Delete a wishlist (protected)
 DELETE http://localhost:5002/wishlists/5
-Authorization: Bearer {{token}}
+Authorization: Bearer {{jwt_token}}
 
 ###
 
 ### 11) Get a specific wishlist with media details (protected)
 GET http://localhost:5002/wishlists/17
-Authorization: Bearer {{token}}
+Authorization: Bearer {{jwt_token}}
+
+###

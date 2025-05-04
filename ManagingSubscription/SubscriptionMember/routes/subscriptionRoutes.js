@@ -1,13 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const subscriptionController = require("../controllers/subscriptionController");
-const authMiddleware = require("../authMiddleware");
+const authenticate = require("../middleware/authenticate");
+const authorize = require("../middleware/authorize");
 
-// Require a valid JWT on all subscription endpoints:
-router.use(authMiddleware);
+// Apply authentication middleware on all subscription routes
+router.use(authenticate);
 
-// Get subscription list
+// Public routes (accessible to anyone)
 router.get("/types", subscriptionController.getSubscriptionTypes);
+
+// Routes requiring 'member' role
+router.use(authorize("member")); // Apply 'member' role authorization
 
 // Member subscribes to library system
 router.post("/", subscriptionController.subscribeToLibrary);
@@ -18,7 +22,7 @@ router.put("/", subscriptionController.updateSubscription);
 // Member remove subscription
 router.delete("/", subscriptionController.removeSubscription);
 
-// Billing routes
+// Billing routes (restricted access)
 router.get("/member/:memberId", subscriptionController.getMemberSubscription);
 router.post("/billing", subscriptionController.processPayment);
 router.get("/billing/history/:memberId", subscriptionController.getBillingHistory);
